@@ -8,7 +8,7 @@ using web_API.Services;
 namespace web_API.Controllers
 {
     [ApiController]
-    [Route("[api/controller]")]
+    [Route("[controller]")]
     public class UsersController : ControllerBase
     {
         private CompanyContext _companyContext;

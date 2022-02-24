@@ -52,18 +52,27 @@ namespace web_API
             {
                 dbContext.Users.Add(new User
                 {
+                    Id="1",
                     UserName = "ahad",
                     Password = "qw12",
+                    FirstName="abdul",
+                    LastName="ahad",
                 });
                 dbContext.Users.Add(new User
                 {
+                    Id = "2",
                     UserName = "faisal",
                     Password = "q1w2",
+                    FirstName = "faisal",
+                    LastName = "shahzaid",
                 });
                 dbContext.Users.Add(new User
                 {
+                    Id = "3",
                     UserName = "hassan",
                     Password = "12qw",
+                    FirstName = "muhammad",
+                    LastName = "hassan",
                 });
             }
         }
