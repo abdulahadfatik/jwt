@@ -6,36 +6,34 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
+using web_API.Context;
 using web_API.Entities;
 using web_API.Helpers;
-using web_API.Models;
 
 namespace web_API.Services
 {
     public interface IUserService
     {
         AuthenticateResponse Authenticate(AuthenticateRequest model);
-        IEnumerable<User> GetAll();
-        User GetById(int id);
+        IEnumerable<Entities.User> GetAll();
+        Entities.User GetById(string id);
     }
 
     public class UserService : IUserService
     {
-        private List<User> _users = new List<User>
-        {
-            new User { Id = 1, FirstName = "Test", LastName = "User", Username = "test", Password = "test" }
-        };
+        private CompanyContext CompanyContext;
 
-        private readonly AppSettings _appSettings;
+        private readonly AppSettings AppSettings;
 
-        public UserService(IOptions<AppSettings> appSettings)
+        public UserService(CompanyContext companyContext, IOptions<AppSettings> appSettings)
         {
-            _appSettings = appSettings.Value;
+            CompanyContext = companyContext;
+            AppSettings = appSettings.Value;
         }
 
         public AuthenticateResponse Authenticate(AuthenticateRequest model)
         {
-            var user = _users.SingleOrDefault(x => x.Username == model.Username && x.Password == model.Password);
+            var user = CompanyContext.Users.SingleOrDefault(x => x.UserName == model.Username && x.Password == model.Password);
 
             if (user == null) return null;
 
@@ -44,22 +42,22 @@ namespace web_API.Services
             return new AuthenticateResponse(user, token);
         }
 
-        public IEnumerable<User> GetAll()
+        public IEnumerable<Entities.User> GetAll()
         {
-            return _users;
+            return CompanyContext.Users;
         }
 
-        public User GetById(int id)
+        public Entities.User GetById(string id)
         {
-            return _users.FirstOrDefault(x => x.Id == id);
+            return CompanyContext.Users.FirstOrDefault(x => x.Id == id);
         }
 
         // helper methods
 
-        private string generateJwtToken(User user)
+        private string generateJwtToken(Entities.User user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
+            var key = Encoding.ASCII.GetBytes(AppSettings.Secret);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new[] { new Claim("id", user.Id.ToString()) }),
